@@ -1,4 +1,4 @@
-# Atlas — Company Research Assistant (DeepSeek)
+# Atlas — Company Research Assistant
 
 Northstar Systems uses Atlas to research uploaded company documents and tables.
 The two-file Gradio application retains document retrieval, spreadsheet
