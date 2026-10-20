@@ -1,0 +1,10 @@
+Microsoft — sourced teaching summary
+
+Microsoft offers software, cloud services and devices. Its 2024 reporting segments were Productivity and Business Processes, Intelligent Cloud, and More Personal Computing. These company-wide figures include all reporting segments.
+
+USD millions; consolidated annual FY2022–FY2024, one row per fiscal year ending June 30. total_revenue_musd=revenue; profit_after_tax_musd=net income; earnings_from_operations_musd=operating income; rd_spend_musd=R&D expense. Not calendar-year aligned.
+
+Source: 2024 annual report, Income Statements.
+https://www.microsoft.com/investor/reports/ar24/
+
+Figures are historical, not latest results. This is a short paraphrased summary with selected financial facts, not the original annual report. All amounts in the companion table are millions of US dollars. Profit means net income; operating income is separate. Do not treat different companies’ year labels as identical reporting dates.

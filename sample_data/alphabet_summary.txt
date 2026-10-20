@@ -1,0 +1,10 @@
+Alphabet 
+
+Alphabet reports Google Services, Google Cloud and Other Bets. Google Services includes advertising and subscription-related activities. The table represents the whole group, not Google Cloud alone.
+
+USD millions; consolidated calendar years 2022–2024, one row per year ending December 31. revenues_us_millions=revenue; net_earnings_us_millions=net income; income_from_operations_us_millions=operating income; rnd_expense_us_millions=R&D expense.
+
+Source: 2024 Form 10-K, consolidated statements of income, printed page 53.
+https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-20241231.htm
+
+Figures are historical, not latest results. This is a short paraphrased summary with selected financial facts, not the original annual report. All amounts in the companion table are millions of US dollars. Profit means net income; operating income is separate. Do not treat different companies’ year labels as identical reporting dates.
