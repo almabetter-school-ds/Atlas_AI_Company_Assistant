@@ -34,7 +34,7 @@ Open http://127.0.0.1:7860/ and keep the terminal running.
 - `app.py`: explicit backend imports, upload/question/clear callbacks and UI.
 - `backend.py`: latest commented backend; workspace management, file parsing,
   retrieval, planning and validated pandas calculations.
-- `AI_Company_Assistant_Student_Guide.ipynb`: concise guide,
+- `Atlas_AI_Company_Assistant.ipynb`: concise guide,
   function walkthrough, infographics, sample reporting notes and an AI build prompt.
 - `sample_data/`: six sample files.
 - `.env.example`: safe configuration template; `.env` is ignored by Git.
