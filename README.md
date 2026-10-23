@@ -59,3 +59,13 @@ Files/indexes are in RAM, lost on restart. Chat history is display-only.
 Tables support validated aggregations/filters, not arbitrary generated code,
 joins or forecasting. Scanned PDFs need OCR separately. 
 
+### Note: n8n Integration (Lesson 3)
+
+This repository also includes **`app_n8n.py`**, an extended version of Atlas that integrates with **n8n** to automate research report generation and email delivery.
+
+- **Lesson 1:** Use `app.py` to build and run the original Atlas Company Research Assistant.
+- **Lesson 3:** Use `app_n8n.py` to connect Atlas with an n8n workflow using webhooks.
+
+Both applications share the same `backend.py`.
+
+**Note:** `app_n8n.py` is not required for Lesson 1. Its additional functionality and code changes will be explained step by step in **Lesson 3**.
