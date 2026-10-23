@@ -1,4 +1,4 @@
-"""Atlas browser interface. Run with: python app.py.
+"""Atlas conected with n8n to send email reports. Run with: python app_n8n.py.
 
 Buttons call backend.py directly. No custom HTTP API is defined here.
 """
@@ -87,85 +87,136 @@ def clear_conversation():
 
 N8N_WEBHOOK_URL = "http://localhost:5678/webhook/atlas-report"
 
+FIXED_RESEARCH_QUESTION = """
+Prepare a comprehensive company research analysis for
+the selected companies using only their uploaded files.
 
-def send_email_report(recipient, companies, history):
+Cover the following topics:
+
+1. Company Overview and Business Activities
+   - Main products and services
+   - Business segments and operations
+
+2. Reporting Periods
+   - Financial years covered
+   - Exact reporting period-end dates
+
+3. Financial Performance
+   - Revenue
+   - Operating income
+   - Research and development expenses
+   - Other relevant available financial metrics
+   - Currency and units
+
+4. Financial Comparison
+   - Compare available financial metrics across companies
+   - Explain differences in reporting periods
+   - Show supported numerical comparisons
+
+5. Key Findings
+   - Important financial observations
+   - Business insights supported by the uploaded data
+
+6. Limitations
+   - Missing information
+   - Differences in reporting periods
+   - Data comparability limitations
+
+IMPORTANT RULES:
+- Use only the uploaded files of selected companies.
+- Do not invent financial figures or business activities.
+- Preserve exact numerical values, currencies, and dates.
+- Do not assume the companies use the same fiscal year.
+- Include supporting evidence citations where available.
+- Clearly state when information is unavailable.
+- Do not use previous chatbot conversations.
+"""
+
+def send_email_report(
+    key,
+    recipient,
+    companies,
+    store_type,
+    rerank,
+    hybrid
+):
     """
-    Send the latest Atlas research answer to n8n.
+    Generate a fresh research report from uploaded files
+    and send it to n8n for email delivery.
 
-    Parameters: 
-        recipient: Email address entered by the user
-        companies: Selected companies in Atlas
-        history: Gradio chatbot conversation
-
-    Returns:
-        A status message for the Gradio interface
+    This function does not use chatbot history.
     """
 
     # Step 1: Validate recipient email
     recipient = (recipient or "").strip()
 
     if not recipient:
-        return "Please enter a recipient email address."
+        return "Error: Please enter a recipient email address."
 
-    # Step 2: Check if an Atlas answer exists
-    if not history:
-        return "Please ask Atlas a question before sending an email."
+    # Step 2: Check selected companies
+    if not companies:
+        return "Error: Please select at least one company."
 
-    # Step 3: Extract the latest question and answer
-    question = ""
-    report = ""
-
-    for message in reversed(history):
-
-        if not report and message["role"] == "assistant":
-            report = message["content"]
-
-        elif report and message["role"] == "user":
-            question = message["content"]
-            break
-
-    if not question or not report:
-        return "No completed Atlas report is available."
-
-    # Step 4: Prepare the data for n8n
-    data = {
-        "recipient": recipient,
-        "company": ", ".join(companies or []),
-        "question": question,
-        "report": report
-    }
-
-    # Step 5: Send data to n8n
-    # Step 5: Send data to n8n and handle its response
     try:
+        # Step 3: Generate fresh research using Atlas backend
+        research_result = answer_question(
+            key,
+            FIXED_RESEARCH_QUESTION,
+            companies,
+            "Both",
+            store_type,
+            rerank,
+            hybrid
+        )
+
+        # Step 4: Extract generated research analysis
+        report = research_result["answer"]
+
+        if not report or not report.strip():
+            return "Error: Atlas could not generate the research report."
+
+        # Step 5: Prepare JSON data for n8n
+        data = {
+            "recipient": recipient,
+            "company": ", ".join(companies),
+            "question": FIXED_RESEARCH_QUESTION,
+            "report": report
+        }
+
+        # Step 6: Send data to n8n
         response = requests.post(
             N8N_WEBHOOK_URL,
             json=data,
-            timeout=60
+            timeout=180
         )
 
-        # Read the JSON response from n8n
+        # Step 7: Read n8n response
         result = response.json()
 
-        # Handle successful email submission
         if response.ok and result.get("status") == "success":
             return "Success: " + result.get(
-                "message", "Email sent successfully."
+                "message",
+                "Research report sent successfully."
             )
 
-        # Handle validation or other errors
         return "Error: " + result.get(
-            "message", "Unable to send the report."
+            "message",
+            "Unable to send the research report."
         )
 
     except requests.exceptions.Timeout:
-        return "Error: n8n did not respond within 60 seconds."
+        return "Error: n8n did not respond within 180 seconds."
 
     except requests.exceptions.RequestException as error:
+        logger.exception("n8n connection failed")
         return f"Error: Could not connect to n8n. {error}"
 
     except ValueError:
-        return "Error: n8n returned an invalid response."
+        return "Error: Invalid research data or n8n response."
+
+    except Exception as error:
+        logger.exception("Email research report failed")
+        return f"Error: Report generation failed: {error}"
     
 CSS = """
 .gradio-container {max-width:1400px !important; margin:auto;}
@@ -250,18 +301,19 @@ with gr.Blocks(title="Atlas by Northstar Systems", css=CSS,
     email_button.click(
         fn=send_email_report,
 
-        # Values passed to the Python function
         inputs=[
+            key,
             recipient_email,
             selected,
-            chat
+            store_type,
+            rerank,
+            hybrid
         ],
 
-        # Display the result in the Email Status field
         outputs=email_status,
 
         **options
-    )
+        )
 if __name__ == "__main__":
     # Gradio starts the local browser interface; no separate server setup is needed.
     ui.queue().launch(
